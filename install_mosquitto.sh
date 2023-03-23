@@ -4,13 +4,16 @@
 sudo apt update
 sudo apt install -y mosquitto mosquitto-clients
 
-# Enable Mosquitto MQTT broker to run on startup
-sudo systemctl enable mosquitto.service
+# Add listener configuration
+sudo tee /etc/mosquitto/conf.d/listener.conf >/dev/null <<EOF
+listener 1883 0.0.0.0
+protocol mqtt
+EOF
 
-# Configure Mosquitto MQTT broker to allow anonymous connections
-sudo tee /etc/mosquitto/conf.d/default.conf > /dev/null <<EOF
+# add configuration to allow anonymous connections
+sudo tee /etc/mosquitto/conf.d/allow_anonymous.conf >/dev/null <<EOF
 allow_anonymous true
 EOF
 
-# Restart Mosquitto service to apply changes
-sudo systemctl restart mosquitto.service
+# Start and enable Mosquitto MQTT broker to run on startup
+sudo systemctl enable --now mosquitto.service
